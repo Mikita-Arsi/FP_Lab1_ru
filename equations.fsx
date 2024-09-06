@@ -1,28 +1,49 @@
-// Определите функции для решение алгебраических уравнений
+open System
 
-let dichotomy f a b = 0.
 
-let iterations phi x0 = 0.
+let eps = 1e-7
 
-let newthon f f' x0 = 0.
-// используйте функцию 'iterations'
+let dichotomy f a b =
+    let rec loop a b =
+        let mid = (a + b) / 2.0
+        if (b - a) < eps then mid
+        elif f mid = 0.0 then mid
+        elif f a * f mid < 0.0 then loop a mid
+        else loop mid b
+    loop a b
 
-// Решите 3 уравнения (начиная со своего номера варианта) с использованием 3-х методов
-let f1 = ...
-let f2 = ...
-let f3 = ...
+let iterations phi x0 =
+    let rec loop xn =
+        let xn1 = phi xn
+        if abs (xn1 - xn) < eps then xn1
+        else loop xn1
+    loop x0
 
-let f1' = ...
-let f2' = ...
-let f3' = ...
+let newton f f' x0 =
+    let rec loop xn =
+        let fxn = f xn
+        let fxn' = f' xn
+        if abs fxn < eps then xn
+        else loop (xn - fxn / fxn')
+    loop x0
 
-let phi1 = ...
-let phi2 = ...
-let phi3 = ...
+let f1 x = exp x + log x - 10.0 * x
+let f2 x = cos x - exp (x * 2.0 / -2.0) + x - 1.0
+let f3 x = 1.0 - x + sin x - log(1.0 + x)
+
+let f1' x = exp x + 1.0 / x - 10.0
+let f2' x = -sin x - x * exp (x * 2.0 / -2.0) + 1.0
+let f3' x = -1.0 + cos x - 1.0 / (1.0 + x)
+
+let phi1 x = (exp x + log x) / 10.0
+let phi2 x = cos x - exp (x * 2.0 / -2.0) + 1.0
+let phi3 x = x - (1.0 - x + sin x - log(1.0 + x))
 
 let main = 
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f1 0. 1.) (iterations phi1 0.) (newthon f1 f1' 1.)
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f2 0. 1.) (iterations phi2 0.) (newthon f2 f2' 1.)
-    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f3 0. 1.) (iterations phi3 0.) (newthon f3 f3' 1.)
 
- 
+    printfn "%10s  %10s  %10s" "Dichotomy" "Iterations" "Newton"
+    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f1 3.0 4.0) (iterations phi1 3.5) (newton f1 f1' 3.5)
+    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f2 1.0 2.0) (iterations phi2 1.0) (newton f2 f2' 1.0)
+    printfn "%10.5f  %10.5f  %10.5f" (dichotomy f3 1.0 1.5) (iterations phi3 1.0) (newton f3 f3' 1.0)
+
+main

@@ -1,6 +1,3 @@
-open System
-
-
 let eps = 1e-7
 
 let dichotomy f a b =
